@@ -33,15 +33,39 @@ contract MyEpicGame is ERC721 {
 
   mapping(address => uint256) public nftHolders;
 
+  struct BigBoss {
+    string name;
+    string imageURI;
+    uint hp;
+    uint maxHp;
+    uint attackDamage;
+  }
+
+  BigBoss public bigBoss;
+
   constructor(
     string[] memory characterNames,
     string[] memory characterImageURIs,
     uint[] memory characterHp,
     uint[] memory characterAttackDmg,
-    uint[] memory characterIntelligence
+    uint[] memory characterIntelligence,
+    string memory bossName,
+    string memory bossImageURI,
+    uint bossHp,
+    uint bossAttackDamage
   ) 
     ERC721("Cases Solved", "CASES")
   {
+    bigBoss = BigBoss({
+      name: bossName,
+      imageURI: bossImageURI,
+      hp: bossHp,
+      maxHp: bossHp,
+      attackDamage: bossAttackDamage
+    });
+
+    console.log("Done initializing boss %s w/ HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+
     for(uint i = 0; i < characterNames.length; i+= 1) {
       defaultCharacters.push(CharacterAttributes({
         characterIndex: i,
