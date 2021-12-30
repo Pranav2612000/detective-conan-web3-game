@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 
@@ -7,6 +7,58 @@ const TWITTER_HANDLE = '_buildspace';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
+
+  const [currentAccount, setCurrentAccount] = useState(null);
+
+  const checkIfWalletIsConnected = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (!ethereum) {
+        console.log('Make sure you have Metamask!');
+        return;
+      } else {
+        console.log('We have the ethereum object', ethereum);
+
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+
+        if (accounts.length !== 0) {
+          const account = accounts[0];
+          console.log('Found an authorized account:', account);
+          setCurrentAccount(account);
+        } else {
+          console.log('No authorized account found');
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const connectWalletAction = async () => {
+    try {
+      const { ethereum } = window;
+      
+      if (!ethereum) {
+        console.log('Make sure you have Metamask!');
+        return;
+      }
+
+      const accounts = await ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+
+      console.log('Connected', accounts[0]);
+      setCurrentAccount(accounts[0]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, []);
+
   return (
     <div className="App">
       <div className="container">
@@ -18,6 +70,12 @@ const App = () => {
               src="https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv"
               alt="Monty Python Gif"
             />
+            <button
+              className="cta-button connect-wallet-button"
+              onClick={connectWalletAction}
+            >
+              Connect Wallet to Get Started
+            </button>
           </div>
         </div>
         <div className="footer-container">
